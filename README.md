@@ -225,6 +225,18 @@ Try these searches to get started:
 
 - **MCP Central Lab**: Test the server interactively at https://lab.mcpcentral.io/
 
+## MCP Registry
+
+This server is published in the official [Model Context Protocol Registry](https://github.com/modelcontextprotocol/registry). The registry configuration is defined in `server.json`, which specifies:
+
+- **Server Metadata**: Name, description, and repository information
+- **Remote Endpoints**: HTTP transport endpoints at `https://mcp.buildaipod.com/mcp` and `https://mcp.demos.build/mcp`
+- **Package Distribution**: Available on npm as `build-vault-mcp-server`
+- **Client Compatibility**: Supports Claude Desktop, Claude Code, Goose, and OpenAI ChatGPT
+- **Feature Declaration**: 12 tools, 8 resources, 4 prompts with semantic search and deep research capabilities
+
+The registry enables automatic discovery and installation of this MCP server across compatible clients.
+
 ## Support
 
 - **GitHub Issues**: For bug reports and feature requests
