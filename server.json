@@ -2,18 +2,18 @@
   "name": "build-vault",
   "description": "MCP server for The Build Podcast Vault - AI product discovery and insights from vault.buildaipod.com. Search 1000+ insights with semantic search, speaker filtering, and OpenAI Deep Research compatibility.",
   "repository": {
-    "url": "https://github.com/Cam10001110101/build-vault-mcp-server1",
+    "url": "https://github.com/The-Build-Podcast/build-vault-mcp-server",
     "source": "github",
-    "id": "Cam10001110101/build-vault-mcp-server1"
+    "id": "The-Build-Podcast/build-vault-mcp-server"
   },
   "version_detail": {
     "version": "0.2.0"
   },
   "remotes": [
     {
-      "transport": "sse",
+      "transport": "http",
       "url": "https://mcp.buildaipod.com/mcp",
-      "description": "Production server with global edge deployment via Cloudflare Workers",
+      "description": "Production endpoint",
       "features": {
         "tools": 12,
         "resources": 8,
@@ -23,7 +23,7 @@
       }
     },
     {
-      "transport": "sse",
+      "transport": "http",
       "url": "https://mcp.demos.build/mcp",
       "description": "Alternative production endpoint",
       "features": {
@@ -76,7 +76,7 @@
   ],
   "features": {
     "protocol_version": "2025-06-18",
-    "transports": ["stdio", "http", "sse"],
+    "transports": ["stdio", "http"],
     "capabilities": {
       "tools": {
         "count": 12,
