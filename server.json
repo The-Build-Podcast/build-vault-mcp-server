@@ -1,0 +1,111 @@
+{
+  "name": "build-vault",
+  "description": "MCP server for The Build Podcast Vault - AI product discovery and insights from vault.buildaipod.com. Search 1000+ insights with semantic search, speaker filtering, and OpenAI Deep Research compatibility.",
+  "repository": {
+    "url": "https://github.com/Cam10001110101/build-vault-mcp-server1",
+    "source": "github",
+    "id": "Cam10001110101/build-vault-mcp-server1"
+  },
+  "version_detail": {
+    "version": "0.2.0"
+  },
+  "remotes": [
+    {
+      "transport": "sse",
+      "url": "https://mcp.buildaipod.com/mcp",
+      "description": "Production server with global edge deployment via Cloudflare Workers",
+      "features": {
+        "tools": 12,
+        "resources": 8,
+        "prompts": 4,
+        "semantic_search": true,
+        "deep_research": true
+      }
+    },
+    {
+      "transport": "sse",
+      "url": "https://mcp.demos.build/mcp",
+      "description": "Alternative production endpoint",
+      "features": {
+        "tools": 12,
+        "resources": 8,
+        "prompts": 4,
+        "semantic_search": true,
+        "deep_research": true
+      }
+    }
+  ],
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "build-vault-mcp-server",
+      "environment_variables": [
+        {
+          "name": "USE_SUPABASE",
+          "description": "Enable Supabase database features",
+          "default_value": "true",
+          "is_required": false
+        },
+        {
+          "name": "SUPABASE_URL",
+          "description": "Supabase project URL",
+          "is_required": false,
+          "is_secret": false
+        },
+        {
+          "name": "SUPABASE_ANON_KEY",
+          "description": "Supabase anonymous key for database access",
+          "is_required": false,
+          "is_secret": true
+        },
+        {
+          "name": "ENABLE_SEMANTIC_SEARCH",
+          "description": "Enable vector similarity search using pgvector",
+          "default_value": "true",
+          "is_required": false
+        }
+      ],
+      "package_arguments": []
+    }
+  ],
+  "supported_clients": [
+    "claude_desktop",
+    "claude_code",
+    "goose",
+    "openai_chatgpt"
+  ],
+  "features": {
+    "protocol_version": "2025-06-18",
+    "transports": ["stdio", "http", "sse"],
+    "capabilities": {
+      "tools": {
+        "count": 12,
+        "categories": ["search", "analytics", "discovery", "deep_research"]
+      },
+      "resources": {
+        "count": 8,
+        "elicitation": true
+      },
+      "prompts": {
+        "count": 4,
+        "guided_workflows": true
+      }
+    },
+    "data_source": {
+      "type": "supabase_pgvector",
+      "insights_count": 1000,
+      "embedding_dimensions": 3072,
+      "categories": ["business_ideas", "frameworks_and_exercises", "products", "points_of_view", "stories_and_anecdotes", "quotes"]
+    }
+  },
+  "tags": [
+    "ai",
+    "podcast",
+    "insights",
+    "semantic-search",
+    "vector-database",
+    "openai-deep-research",
+    "chatgpt-connector",
+    "build-podcast"
+  ]
+}
