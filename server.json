@@ -1,34 +1,34 @@
 {
   "name": "build-vault",
-  "description": "MCP server for The Build Podcast Vault - AI product discovery and insights from vault.buildaipod.com. Search 1000+ insights with semantic search, speaker filtering, and OpenAI Deep Research compatibility.",
+  "description": "MCP server for The Build Podcast Vault - AI product discovery and insights from vault.buildaipod.com. Semantic search over thousands of insights, episodes, products and transcript segments, with OpenAI Deep Research compatibility.",
   "repository": {
     "url": "https://github.com/The-Build-Podcast/build-vault-mcp-server",
     "source": "github",
     "id": "The-Build-Podcast/build-vault-mcp-server"
   },
   "version_detail": {
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "remotes": [
     {
-      "transport": "http",
+      "transport": "streamable-http",
       "url": "https://mcp.buildaipod.com/mcp",
-      "description": "Production endpoint",
+      "description": "Production endpoint (global edge). Legacy SSE at /sse.",
       "features": {
-        "tools": 12,
-        "resources": 8,
+        "tools": 18,
+        "resources": 4,
         "prompts": 4,
         "semantic_search": true,
         "deep_research": true
       }
     },
     {
-      "transport": "http",
+      "transport": "streamable-http",
       "url": "https://mcp.demos.build/mcp",
-      "description": "Alternative production endpoint",
+      "description": "Alternative production endpoint. Legacy SSE at /sse.",
       "features": {
-        "tools": 12,
-        "resources": 8,
+        "tools": 18,
+        "resources": 4,
         "prompts": 4,
         "semantic_search": true,
         "deep_research": true
@@ -41,28 +41,10 @@
       "name": "build-vault-mcp-server",
       "environment_variables": [
         {
-          "name": "USE_SUPABASE",
-          "description": "Enable Supabase database features",
-          "default_value": "true",
-          "is_required": false
-        },
-        {
-          "name": "SUPABASE_URL",
-          "description": "Supabase project URL",
+          "name": "VAULT_API_BASE_URL",
+          "description": "Base URL of the Build Vault backend API, used by the local stdio transport. Not needed when connecting to the hosted remote endpoints.",
           "is_required": false,
           "is_secret": false
-        },
-        {
-          "name": "SUPABASE_ANON_KEY",
-          "description": "Supabase anonymous key for database access",
-          "is_required": false,
-          "is_secret": true
-        },
-        {
-          "name": "ENABLE_SEMANTIC_SEARCH",
-          "description": "Enable vector similarity search using pgvector",
-          "default_value": "true",
-          "is_required": false
         }
       ],
       "package_arguments": []
@@ -75,16 +57,15 @@
     "openai_chatgpt"
   ],
   "features": {
-    "protocol_version": "2025-06-18",
-    "transports": ["stdio", "http"],
+    "protocol_version": "2025-11-25",
+    "transports": ["stdio", "streamable-http", "sse"],
     "capabilities": {
       "tools": {
-        "count": 12,
-        "categories": ["search", "analytics", "discovery", "deep_research"]
+        "count": 18,
+        "categories": ["search", "analytics", "discovery", "catalog", "deep_research"]
       },
       "resources": {
-        "count": 8,
-        "elicitation": true
+        "count": 4
       },
       "prompts": {
         "count": 4,
@@ -92,10 +73,8 @@
       }
     },
     "data_source": {
-      "type": "supabase_pgvector",
-      "insights_count": 1000,
-      "embedding_dimensions": 3072,
-      "categories": ["business_ideas", "frameworks_and_exercises", "products", "points_of_view", "stories_and_anecdotes", "quotes"]
+      "semantic_search": true,
+      "categories": ["frameworks", "points_of_view", "business_ideas", "stories", "quotes", "products"]
     }
   },
   "tags": [
