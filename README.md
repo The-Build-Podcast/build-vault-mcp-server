@@ -6,36 +6,83 @@
 
 ## Overview
 
-A **Model Context Protocol (MCP) server** that transforms [The Build Podcast](https://www.youtube.com/@the-build-podcast) into a searchable knowledge base with thousands of AI insights using advanced hybrid search. Combines vector semantic similarity with full-text search to help you discover business ideas, frameworks, and product strategies. Access the collective wisdom of builders and entrepreneurs through natural language queries, making podcast knowledge instantly actionable. 
+A **Model Context Protocol (MCP) server** that transforms [The Build Podcast](https://www.youtube.com/@the-build-podcast) into a searchable knowledge base with thousands of AI insights using advanced semantic search. Combines vector similarity with full-text search to help you discover business ideas, frameworks, and product strategies. Access the collective wisdom of builders and entrepreneurs through natural language queries, making podcast knowledge instantly actionable.
 
 
 
 ## Background
 
-Our MCP Server sources it's information from [The Build Vault](https://vault.buildaipod.com/). The Build Vault is an intelligent archive of AI-focused insights, products, ideas and news extracted from The Build Podcast episodes. The backend powers a sophisticated AI-driven data processing pipeline that consists of the following stages:
+Our MCP Server sources its information from [The Build Vault](https://vault.buildaipod.com/). The Build Vault is an intelligent archive of AI-focused insights, products, ideas and news extracted from The Build Podcast episodes, produced by an AI-driven data processing pipeline:
 
 Core Processing Pipeline
 - YouTube Episode Extraction and Audio Download
 - AssemblyAI Transcriptions with speaker diarization, sentiment analysis, and auto highlights
 - Segment Processing with AI-enhanced titles, topics, and key phrases
 
-LLM Driven Content Extraction 
+LLM Driven Content Extraction
 - 150-250 word summaries
-- Extract insights across Frameworks & Exercises, Points of View, Business Ideas, Stories & Anecdotes, Quotes, and Products
+- Extract insights across Frameworks, Points of View, Business Ideas, Stories, Quotes, and Products
 - Product Extraction: Automatically identifies and tracks product mentions from insights, preparing them for enrichment workflows
 - Link Processing: Extracts URLs from YouTube descriptions and enriches them with AI-powered summaries, categorization, and key takeaways
 
-Advanced Search & Discovery 
+Advanced Search & Discovery
 - Vector Embeddings: Generates embeddings for semantic search capabilities
 - Hybrid Search: Combines vector similarity search with full-text search
 
+
+## MCP Version Compatibility
+
+### MCP 2025-11-25 Compliance
+- **Protocol Version**: [2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25) (negotiates down to 2025-06-18 / 2025-03-26)
+- **Transports**: Streamable HTTP (`/mcp`) + legacy SSE (`/sse`) for remote clients, plus stdio for local/npm
+- **Tool execution errors**: input/business errors return `isError: true` with actionable text (not protocol errors), enabling model self-correction
+- **Structured output**: list/search tools include `structuredContent` mirrored as JSON text
+- **Title Fields**: all tools, resources and prompts include descriptive titles
+- **OpenAI Deep Research**: `search` + `fetch` tools compatible with Deep Research Custom Connectors
+
+### Vault Discovery Tools (18 Total)
+- **list_products / search_products / get_product_details / find_similar_products**: list and semantically search insights; `find_similar_products` uses real vector similarity
+- **search_by_date_range / search_by_category / search_by_timeframe / get_timeline_insights**: filter insights by publish date, category, in-episode timestamp, or chronology
+- **list_episodes**: browse podcast episodes
+- **search / fetch** (Deep Research): natural-language search and full-content retrieval in `{id, title, text, url}` format
+- **list_products_catalog / search_products_catalog / get_catalog_product**: browse and search the curated product catalog
+- **search_segments**: semantic search over transcript segments
+- **list_episode_links**: enriched links/resources referenced in episodes (Spotlight)
+- **insights_by_domain / insights_by_tool_category**: filter by technical domain, difficulty, or tool category
+
+Categories: `frameworks`, `points_of_view`, `business_ideas`, `stories`, `quotes`, `products` (legacy aliases `frameworks_and_exercises` and `stories_and_anecdotes` are still accepted).
+
+### Analytics Resources (4 Total)
+- **Trending Insights**: High-confidence insights with "What's Next?" guidance
+- **Category Distribution**: Live analytics on content breakdown by category
+- **Episode Timeline**: Chronological episode data with insight counts
+- **Tech Stack Insights**: Technical domain, tool category and implementation-difficulty trends
+
+### Guided Prompts (4 Total)
+- **Find Business Ideas**: Discover business insights and opportunities
+- **Explore Frameworks**: Structured exploration of frameworks and exercises
+- **Timeline Analysis**: Chronological exploration of topics and themes
+- **Compare Content Types**: Compare different categories of insights
+
+### "What's Next?" Guidance
+Resources append a plain-text **What's Next?** section with contextual next steps
+(category breakdowns, suggested tools, example queries). This is descriptive guidance,
+not protocol elicitation — the server does not advertise an elicitation capability.
+
+
+### OpenAI Deep Research Integration
+
+This server is compatible with OpenAI's Deep Research Custom Connectors. The `search` and `fetch` tools are specifically designed to work with Deep Research models:
+
+- **Search Tool**: Accepts natural language queries (e.g., "insights about AI agents") and returns results in the format `{id, title, text, url}`
+- **Fetch Tool**: Retrieves complete content with metadata for deep analysis and citation
 
 
 ## MCP Client Configuration
 
 ### Known Client Compatibility:
 - Claude Desktop
-- Claude Code  
+- Claude Code
 - Goose
 - OpenAI ChatGPT (chat.openai.com)
 - OpenAI Playground
@@ -73,70 +120,12 @@ claude mcp add build-vault -s user --transport http https://mcp.buildaipod.com/m
 <img src="screenshots/openai-playground-config.png" alt="OpenAI Playground Configuration" width="250" />
 
 
-
-
-
-## MCP Version Compatability
-
-### MCP 2025-06-18 Compliance
-- **Protocol Version**: [2025-06-18](https://modelcontextprotocol.io/introduction) with full specification compliance
-- **Structured Output**: Enhanced tools with `outputSchema` and `structuredContent` 
-- **Elicitation Support**: Declared capability with intelligent follow-up suggestions
-- **Title Fields**: All tools, resources, and prompts include descriptive titles
-- **Resource Links**: Cross-referencing between related content
-- **Transports**: stdio + Streamable HTTP
-
-### Enhanced Compatability
-- **OpenAI Deep Research**: Compatible with OpenAI's Deep Research Custom Connectors
-
-### Vault Discovery Tools (12 Total)
-- **List Products**: Browse AI products with filtering and pagination
-- **Search Products**: Semantic search using embeddings (3072 dimensions)
-- **Product Details**: Comprehensive product information with resource links
-- **Find Similar**: Vector similarity search for related products
-- **Search by Speaker**: Filter insights by podcast speakers (Tom Spencer, Cameron Rohn)
-- **Search by Date Range**: Find products within specific time periods
-- **Search by Category**: Filter by 6 content categories (business_ideas, frameworks_and_exercises, products, points_of_view, stories_and_anecdotes, quotes)
--  **Search by Timeframe**: Find insights within episode timestamps
-- **Speaker Summary**: Comprehensive speaker statistics and insights
-- **Timeline Insights**: Chronologically ordered insights with metadata
-- **Search** (Deep Research): Natural language search for AI insights and episodes
-- **Fetch** (Deep Research): Get complete content with full context and metadata
-
-### Analytics Resources with Elicitation (4 Total)
-- **Trending Insights**: High-confidence insights with smart follow-up suggestions
-- **Category Distribution**: Live analytics on content breakdown by category
-- **Episode Timeline**: Chronological episode data with insight counts
-- **Speaker Analytics**: Real-time speaker statistics and content analysis
-
-### Guided Prompts (4 Total)
-- **Find Business Ideas**: Discover business insights and opportunities
-- **Explore Frameworks**: Structured exploration of frameworks and exercises
-- **Timeline Analysis**: Chronological exploration of topics and themes
-- **Compare Content Types**: Compare different categories of insights
-
-### Enhanced Elicitation Features
-When accessing resources, the server provides **intelligent follow-up suggestions**:
-- **Category Analysis**: "Found 9 product insights, 6 points_of_view insights"
-- **Speaker Breakdown**: "Cameron Rohn (11 insights), Tom Spencer (8 insights)"
-- **Tool Recommendations**: Specific next-step suggestions with usage examples
-- **Semantic Search Guidance**: Query suggestions based on actual content
-
-
-### OpenAI Deep Research Integration
-
-This server is compatible with OpenAI's Deep Research Custom Connectors. The `search` and `fetch` tools are specifically designed to work with Deep Research models:
-
-- **Search Tool**: Accepts natural language queries (e.g., "insights about AI agents") and returns results in the format `{id, title, text, url}`
-- **Fetch Tool**: Retrieves complete content with metadata for deep analysis and citation
-
-
 ## Usage Examples
 
 ### Discovering AI Products
-1. **Browse Categories**: Use `search_by_category` with "products" to see 334 product insights
-2. **Semantic Search**: Try `search_products` with "AI agents" or "LangChain" 
-3. **Trending Content**: Access `vault://trending_insights` resource for top 20 high-confidence insights
+1. **Browse Categories**: Use `search_by_category` with "products" to browse the products category
+2. **Semantic Search**: Try `search_products` with "AI agents" or "LangChain"
+3. **Trending Content**: Access `vault://trending_insights` resource for top high-confidence insights
 4. **Follow Suggestions**: Look for "What's Next?" sections with intelligent recommendations
 
 
@@ -146,7 +135,7 @@ Try these searches to get started:
 
 - "What frameworks exist for prompt engineering?"
 - "Business ideas in the healthcare AI space"
-- "What did Tom Spencer say about LangChain?"
+- "How are teams using LangChain in production?"
 - "Insights about AI safety and alignment"
 - "Products for building chatbots"
 
@@ -155,31 +144,33 @@ Try these searches to get started:
 
 | Tool | Name | Description | Parameters |
 |------|------|-------------|------------|
-| **List Products** | `list_products` | Browse AI products with filtering and pagination | `limit`, `offset`, `category`, `approved_only` |
-| **Search Products** | `search_products` | Semantic search across all products | `query`, `limit`, `category` |
-| **Get Product Details** | `get_product_details` | Get comprehensive information about a specific product | `product_id` |
-| **Find Similar Products** | `find_similar_products` | Find products similar to a given one | `product_id`, `limit` |
-| **Search by Speaker** | `search_by_speaker` | Filter insights by podcast speaker | `speaker_name`, `limit` |
-| **Search by Date Range** | `search_by_date_range` | Find products within date range | `start_date`, `end_date`, `limit` |
-| **Search by Category** | `search_by_category` | Filter by content category | `category`, `limit` |
-| **Search by Timeframe** | `search_by_timeframe` | Find insights within episode timestamps | `start_time`, `end_time`, `episode_id` |
-| **Get Speaker Summary** | `get_speaker_summary` | Get comprehensive speaker statistics | `speaker_name` |
-| **Get Timeline Insights** | `get_timeline_insights` | Get chronologically ordered insights | `limit`, `start_date`, `end_date` |
-| **Search** | `search` | Natural language search for ChatGPT Connectors | `query` |
-| **Fetch** | `fetch` | Get complete content with metadata for ChatGPT Connectors | `id` |
+| **List Products** | `list_products` | List insights with filtering/pagination | `limit`, `offset`, `episode_id` |
+| **Search Products** | `search_products` | Semantic search across insights | `query`, `limit`, `similarity_threshold` |
+| **Get Product Details** | `get_product_details` | Get a specific insight by ID | `product_id` |
+| **Find Similar Products** | `find_similar_products` | Vector-similar insights to a given one | `product_id`, `limit`, `similarity_threshold` |
+| **Search by Date Range** | `search_by_date_range` | Insights from episodes in a date range | `start_date`, `end_date`, `limit` |
+| **Search by Category** | `search_by_category` | Filter insights by category | `category`, `limit` |
+| **Search by Timeframe** | `search_by_timeframe` | Insights within episode timestamps | `start_timestamp`, `end_timestamp`, `episode_id`, `limit` |
+| **Get Timeline Insights** | `get_timeline_insights` | Chronologically ordered insights | `episode_id`, `limit` |
+| **List Episodes** | `list_episodes` | Browse podcast episodes | `limit`, `order` |
+| **Search** | `search` | Deep Research search (`{id,title,text,url}`) | `query` |
+| **Fetch** | `fetch` | Deep Research full content + metadata | `id` |
+| **List Products Catalog** | `list_products_catalog` | Browse the curated product catalog | `category`, `limit`, `page` |
+| **Search Products Catalog** | `search_products_catalog` | Search the product catalog | `query`, `limit`, `similarity_threshold` |
+| **Get Catalog Product** | `get_catalog_product` | Get a catalog product by ID | `product_id` |
+| **Search Segments** | `search_segments` | Semantic search over transcript segments | `query`, `limit`, `similarity_threshold` |
+| **List Episode Links** | `list_episode_links` | Enriched links/resources (Spotlight) | `category`, `limit` |
+| **Insights by Domain** | `insights_by_domain` | Filter by technical domain/difficulty | `domain`, `difficulty` |
+| **Insights by Tool Category** | `insights_by_tool_category` | Filter by tool category | `tool_category` |
 
 ## Available Resources
 
 | Resource | URI | Description |
 |----------|-----|-------------|
-| **Trending Insights** | `vault://trending_insights` | Most recent and popular insights with engagement metrics |
-| **Category Distribution** | `vault://category_distribution` | Analytics on content breakdown by categories |
-| **Episode Timeline** | `vault://episode_timeline` | Chronological episode data with duration and metadata |
-| **Speaker Analytics** | `vault://speaker_analytics` | Speaker-specific statistics and content breakdown |
-| **Discovery Guide** | `vault://guide/discovery` | How to find and evaluate AI products |
-| **Product Catalog** | `vault://product_catalog` | Overview of all products with categories and approval status |
-| **Technical Domains** | `vault://technical_domains` | Analysis of technical domains and tool categories |
-| **Episode-Insights Map** | `vault://episode_insights_map` | Comprehensive mapping of episodes to their insights and products |
+| **Trending Insights** | `vault://trending_insights` | High-confidence insights with "What's Next?" guidance |
+| **Category Distribution** | `vault://category_distribution` | Analytics on content breakdown by category |
+| **Episode Timeline** | `vault://episode_timeline` | Chronological episode data with metadata |
+| **Tech Stack Insights** | `vault://tech_stack_insights` | Technical domain / tool category / difficulty trends |
 
 ## Available Prompts
 
@@ -195,31 +186,25 @@ Try these searches to get started:
 ## Architecture
 
 ### Key Technical Features
-- **Triple Transport Design**: stdio, HTTP, and Cloudflare Workers
+- **Multiple transports**: Streamable HTTP (`/mcp`) + legacy SSE (`/sse`) for remote clients; stdio for local
 - **Type Safety**: TypeScript with Zod runtime validation
-- **Vector Search**: Real-time semantic similarity
-- **Elicitation**: Intelligent follow-up suggestions based on content analysis
-- **Health Monitoring**: Built-in health check endpoints
-- **Deep Research Compatible**: Implements search/fetch tools for OpenAI integration
+- **Vector Search**: real semantic similarity over insights, products and transcript segments
+- **Health Monitoring**: `GET /health` endpoint
+- **Deep Research Compatible**: `search`/`fetch` tools for OpenAI integration
 
 
 ## Data Overview
 
-### Primary Data Source: The Build Vault Database
-- **DB Tables**: Index with vector embeddings
-- **Content**: Thousands of AI insights from [vault.buildaipod.com](https://vault.buildaipod.com)
-- **Categories**: 6 types (business_ideas, frameworks_and_exercises, products, points_of_view)
-- **Embeddings**: 3072-dimensional vectors from text-embedding-3-large
+- **Content**: thousands of AI insights, products, episodes and transcript segments from [vault.buildaipod.com](https://vault.buildaipod.com)
+- **Search**: semantic vector search plus full-text and category/date/timeframe filtering
+- **Categories**: 6 types (`frameworks`, `points_of_view`, `business_ideas`, `stories`, `quotes`, `products`)
 
 
 ## Version Information
 
-- **Version**: 0.2.0
-- **Protocol**: MCP 2025-06-18 
-- **SDK**: @modelcontextprotocol/sdk 1.16.0
-- **Features**: Full specification compliance with elicitation, structured output, resource links, and Deep Research compatibility
-- **stdio**: Default MCP transport for direct client integration
-- **http**: MCP 2025-06-18 Streamable HTTP with header validation
+- **Version**: 0.3.0
+- **Protocol**: MCP 2025-11-25 (negotiates to 2025-06-18 / 2025-03-26)
+- **Transports**: Streamable HTTP (`/mcp`), legacy SSE (`/sse`), stdio
 
 ## Testing
 
@@ -233,7 +218,7 @@ This server is published in the official [Model Context Protocol Registry](https
 - **Remote Endpoints**: HTTP transport endpoints at `https://mcp.buildaipod.com/mcp` and `https://mcp.demos.build/mcp`
 - **Package Distribution**: Available on npm as `build-vault-mcp-server`
 - **Client Compatibility**: Supports Claude Desktop, Claude Code, Goose, and OpenAI ChatGPT
-- **Feature Declaration**: 12 tools, 8 resources, 4 prompts with semantic search and deep research capabilities
+- **Feature Declaration**: 18 tools, 4 resources, 4 prompts with semantic search and deep research capabilities
 
 The registry enables automatic discovery and installation of this MCP server across compatible clients.
 
@@ -250,11 +235,11 @@ The registry enables automatic discovery and installation of this MCP server acr
 
 **Scenario**: A developer wants to research AI agents and autonomous systems to build their own agent framework.
 
-**Tools Used**: search, fetch, search_by_speaker
+**Tools Used**: search, fetch, search_segments
 
 1. **Initial Search**: Search for "AI agents and autonomous systems"
 2. **Get Detailed Content**: Fetch the full content for a specific insight ID
-3. **Find Expert Perspectives**: Search for insights by speaker "Tom Spencer"
+3. **Go Deeper**: Use `search_segments` to find the exact transcript moments
 
 **Expected Results**: Framework discussions, real-world implementations, and expert opinions on agent architecture.
 
@@ -262,11 +247,11 @@ The registry enables automatic discovery and installation of this MCP server acr
 
 **Scenario**: An entrepreneur wants to find validated business ideas in the AI space discussed by industry experts.
 
-**Tools Used**: search_by_category, find_similar_products, get_speaker_summary
+**Tools Used**: search_by_category, find_similar_products, search_products_catalog
 
-1. **Browse Business Ideas**: Search by category "business_ideas" 
-2. **Find Similar Concepts**: Find products similar to interesting results
-3. **Expert Analysis**: Get comprehensive summary for speaker "Cameron Rohn"
+1. **Browse Business Ideas**: Search by category "business_ideas"
+2. **Find Similar Concepts**: Find insights similar to interesting results
+3. **Map to Tools**: Use `search_products_catalog` to find relevant products
 
 **Expected Results**: SaaS opportunities, AI product concepts, and market validation insights.
 
@@ -276,9 +261,8 @@ The registry enables automatic discovery and installation of this MCP server acr
 
 **Tools Used**: search_by_category, get_timeline_insights, search_by_date_range
 
-1. **Find Frameworks**: Search by category "frameworks_and_exercises"
+1. **Find Frameworks**: Search by category "frameworks"
 2. **See Evolution Over Time**: Get timeline insights for 2024
 3. **Recent Best Practices**: Search by recent date range
 
 **Expected Results**: Product development methodologies, AI implementation strategies, and team management approaches.
-
